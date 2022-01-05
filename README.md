@@ -18,7 +18,10 @@ install path, and that the riscv-gnu-toolchain package is installed.
     $ autoconf
     $ ./configure --prefix=$RISCV/target
     $ make
+    $
     $ make install
+    $ # or get all test cases
+    $ python package.py
 
 The rest of this document describes the format of test programs for the RISC-V
 architecture.

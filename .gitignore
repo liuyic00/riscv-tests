@@ -12,3 +12,7 @@
 /config.log
 /config.status
 /build
+
+.vscode/
+
+riscv-tests/
