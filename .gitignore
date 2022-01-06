@@ -15,4 +15,10 @@
 
 .vscode/
 
-riscv-tests/
+riscv-tests/riscv-tests-bin/*
+!riscv-tests/riscv-tests-bin/LICENSE
+!riscv-tests/riscv-tests-bin/README.md
+
+riscv-tests/riscv-tests-hex/*
+!riscv-tests/riscv-tests-hex/LICENSE
+!riscv-tests/riscv-tests-hex/README.md
