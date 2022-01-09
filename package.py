@@ -22,17 +22,30 @@ def get_hex(s_path, XLEN):
     with open(s_path, "r") as f:
         file = f.read().splitlines()
     inst_part = [i for i in file if '\t' in i]
-    insts = [i.split(':')[1].split()[0] for i in inst_part]
-    insts = [i for i in insts if len(i) == 8]
-    if XLEN == 32:
-        return insts
-    else:
-        insts64 = []
-        if len(insts) % 2 == 1:
-            insts.append("00000000")
-        for i in range(0, len(insts), 2):
-            insts64.append(insts[i+1] + insts[i])
-        return insts64
+    addr_insts = [i.split('\t')[0:2] for i in inst_part]
+    addr_insts = [[i[0][:-1], i[1].strip()] for i in addr_insts]
+    addr_insts = [i for i in addr_insts if i[1] != '']
+    # split `inst` into bytes, put in `insts` by `addr`
+    insts = []
+    for addinsr in addr_insts:
+        addr = int(addinsr[0], 16) - int("80000000", 16)
+        inst = addinsr[1]
+        insts += ["00"] * (addr - len(insts))
+        for i in range(len(inst), 0, -2):
+            insts.append(inst[i-2: i])
+    # fill 
+    res = len(insts) % (XLEN//8)
+    if res != 0:
+        insts += ["00"] * (XLEN//8 - res)
+    # merge bytes to 32-bits or 64-bits
+    t_insts = []
+    for i in range(0, len(insts), XLEN//8):
+        t = ""
+        for j in range(0, XLEN//8):
+            t = insts[i+j] + t
+        t_insts.append(t)
+
+    return t_insts
 
 
 if __name__ == "__main__":
