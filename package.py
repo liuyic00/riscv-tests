@@ -1,5 +1,6 @@
 import os
 import shutil
+import struct
 
 from os.path import join
 
@@ -18,21 +19,12 @@ def clean():
 
 
 def get_hex(s_path, XLEN):
+    s_path = s_path.split('.')[0] # remove ".dump"
     print(s_path)
-    with open(s_path, "r") as f:
-        file = f.read().splitlines()
-    inst_part = [i for i in file if '\t' in i]
-    addr_insts = [i.split('\t')[0:2] for i in inst_part]
-    addr_insts = [[i[0][:-1], i[1].strip()] for i in addr_insts]
-    addr_insts = [i for i in addr_insts if i[1] != '']
-    # split `inst` into bytes, put in `insts` by `addr`
-    insts = []
-    for addinsr in addr_insts:
-        addr = int(addinsr[0], 16) - int("80000000", 16)
-        inst = addinsr[1]
-        insts += ["00"] * (addr - len(insts))
-        for i in range(len(inst), 0, -2):
-            insts.append(inst[i-2: i])
+    with open(s_path, "rb") as f:
+        file = f.read().hex()
+    insts = [file[i: i+2] for i in range(0, len(file), 2)]
+    insts = insts[int("1000", 16):]
     # fill 
     res = len(insts) % (XLEN//8)
     if res != 0:
